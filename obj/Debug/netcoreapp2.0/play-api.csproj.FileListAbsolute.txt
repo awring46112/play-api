@@ -1,0 +1,10 @@
+/home/awr/dotnet/play-api/bin/Debug/netcoreapp2.0/play-api.deps.json
+/home/awr/dotnet/play-api/bin/Debug/netcoreapp2.0/play-api.runtimeconfig.json
+/home/awr/dotnet/play-api/bin/Debug/netcoreapp2.0/play-api.runtimeconfig.dev.json
+/home/awr/dotnet/play-api/bin/Debug/netcoreapp2.0/play-api.dll
+/home/awr/dotnet/play-api/bin/Debug/netcoreapp2.0/play-api.pdb
+/home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.csproj.CoreCompileInputs.cache
+/home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.AssemblyInfoInputs.cache
+/home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.AssemblyInfo.cs
+/home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.dll
+/home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.pdb
