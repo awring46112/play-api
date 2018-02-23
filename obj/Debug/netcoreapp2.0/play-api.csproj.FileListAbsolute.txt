@@ -8,3 +8,4 @@
 /home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.AssemblyInfo.cs
 /home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.dll
 /home/awr/dotnet/play-api/obj/Debug/netcoreapp2.0/play-api.pdb
+/home/awr/dotnet/play-api/bin/Debug/netcoreapp2.0/play-api.dll.config
