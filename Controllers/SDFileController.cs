@@ -12,6 +12,8 @@ using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Diagnostics;
+using TodoApi.Parsers;
+using TodoApi.Models;
 
 namespace play_api.Controllers
 {
@@ -40,6 +42,17 @@ namespace play_api.Controllers
                     await file.CopyToAsync(stream);
                 }
 
+                SDFileParser parser = new SDFileParser(filePath);
+                // Parallel.ForEach(parser.Parse(), item => {
+                //    item.SVG = GetSVG(item); 
+                // });
+
+                foreach (var item in parser.Parse())
+                {
+                    item.SVG = GetSVG(item);
+                }
+
+
                 var process = new Process()
                 {
                     StartInfo = new ProcessStartInfo()
@@ -57,6 +70,40 @@ namespace play_api.Controllers
                 string result = await process.StandardOutput.ReadToEndAsync();
                 process.WaitForExit();
                 return Ok(result);
+            }
+            finally
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+
+        }
+
+        public string GetSVG(SDFileItem item)
+        {
+
+            var filePath = Path.GetTempFileName();
+            System.IO.File.WriteAllText(filePath, item.CTab);
+
+            try
+            {
+                var process = new Process()
+                {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = "molconvert",
+                        Arguments = $"svg:w100,headless \"{filePath}\"",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    }
+
+                };
+
+                process.Start();
+                string result = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return result;
             }
             finally
             {
