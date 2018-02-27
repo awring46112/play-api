@@ -14,14 +14,16 @@ using System.IO;
 using System.Diagnostics;
 using TodoApi.Parsers;
 using TodoApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Net;
 
 namespace play_api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public class SDFileController : Controller
+    public class GetSDFileInfoController : Controller
     {
-        [HttpPost("UploadSDFile")]
+        [HttpPost("GetSDFileInfo")]
+        [SwaggerResponse(200, Type = typeof(IEnumerable<SDFileItem>))]
         public async Task<IActionResult> Post(IFormFile file)
         {
             var builder = new ConfigurationBuilder()
@@ -29,9 +31,6 @@ namespace play_api.Controllers
             .AddJsonFile("appsettings.json");
 
             var Configuration = builder.Build();
-
-
-            System.Diagnostics.Debug.WriteLine(file.FileName);
 
             var filePath = Path.GetTempFileName();
 
@@ -42,12 +41,36 @@ namespace play_api.Controllers
                     await file.CopyToAsync(stream);
                 }
 
+                SDFileParser parser = new SDFileParser(filePath);
+                var items = parser.Parse().ToList();
+
+                foreach (var item in items)
+                {
+                    item.SVG = GetSVG(item);
+                }
+
+                return Ok(items);
+            }
+            finally
+            {
+                System.IO.File.Delete(filePath);
+            }
+        }
+
+        string GetSVG(SDFileItem item)
+        {
+
+            var filePath = Path.GetTempFileName();
+            System.IO.File.WriteAllText(filePath, item.CTab);
+
+            try
+            {
                 var process = new Process()
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = "standardize",
-                        Arguments = $"-c /tmp/das-rules.xml \"{filePath}\" -f sdf -rp standardize-output",
+                        FileName = "molconvert",
+                        Arguments = $"svg:w100headless \"{filePath}\"",
                         RedirectStandardOutput = true,
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -56,9 +79,9 @@ namespace play_api.Controllers
                 };
 
                 process.Start();
-                string result = await process.StandardOutput.ReadToEndAsync();
+                string result = process.StandardOutput.ReadToEnd();
                 process.WaitForExit();
-                return Ok(result);
+                return result;
             }
             finally
             {
