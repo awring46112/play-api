@@ -70,7 +70,7 @@ namespace play_api.Controllers
                     StartInfo = new ProcessStartInfo()
                     {
                         FileName = "molconvert",
-                        Arguments = $"svg:w100headless \"{filePath}\"",
+                        Arguments = $"svg:w100,headless \"{filePath}\"",
                         RedirectStandardOutput = true,
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -80,6 +80,8 @@ namespace play_api.Controllers
 
                 process.Start();
                 string result = process.StandardOutput.ReadToEnd();
+                result = result.Replace("<svg ","<svg viewBox=\"0 0 100 100\" ");
+                result = result.Replace("height=\"100\"","height=\"100%\"").Replace("width=\"100\"","width=\"100%\"");
                 process.WaitForExit();
                 return result;
             }
